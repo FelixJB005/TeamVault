@@ -1,0 +1,2 @@
+# Block direct access to the user data (Apache)
+Require all denied

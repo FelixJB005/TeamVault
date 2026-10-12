@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TeamVault</title>
+  <link rel="icon" type="image/svg+xml" href="Images/logo/teamvault-logo-stack5.svg">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- Fixed top bar: logo, tabs, profile menu -->
+  <header class="navbar">
+    <a class="brand" href="main.html">
+      <img src="Images/logo/teamvault-logo-stack5.svg" alt="">
+      <span>TeamVault</span>
+    </a>
+
+    <nav id="navTabs" class="nav-tabs" hidden>
+      <button type="button" id="tabChat" class="nav-tab active">Chat</button>
+      <button type="button" id="tabFiles" class="nav-tab">Files</button>
+      <button type="button" id="tabMembers" class="nav-tab">Members</button>
+    </nav>
+
+    <div class="menu-wrap profile">
+      <button type="button" id="profileButton" class="avatar" aria-label="Open profile menu" aria-expanded="false"></button>
+      <div id="profileMenu" class="menu" hidden>
+        <div class="menu-user">
+          <strong id="menuName"></strong>
+          <span>Signed in</span>
+        </div>
+        <button type="button" id="openSettings">Settings</button>
+        <button type="button" id="logoutButton">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- Left side: communities, channels and teams -->
+    <aside class="sidebar">
+      <div class="side-heading">
+        <h2>Communities</h2>
+        <button type="button" id="newCommunity" class="add-button" aria-label="Create a community">+</button>
+      </div>
+      <ul id="communityList" class="list"></ul>
+
+      <div id="communityPanel" hidden>
+        <div id="communityInfo" class="community-info"></div>
+
+        <div class="side-heading"><h2>Channels</h2></div>
+        <ul id="channelList" class="list"></ul>
+
+        <div class="side-heading">
+          <h2>Teams</h2>
+          <button type="button" id="sideNewTeam" class="add-button" aria-label="Create a team">+</button>
+        </div>
+        <ul id="teamList" class="list"></ul>
+      </div>
+
+      <div class="side-footer">&#128274; Messages and files are end-to-end encrypted</div>
+    </aside>
+
+    <!-- Right side -->
+    <main class="main">
+      <div id="emptyState" class="empty">
+        <img src="Images/logo/teamvault-logo-stack5.svg" alt="" class="empty-logo">
+        <h1>Welcome to TeamVault</h1>
+        <p>A private workspace for your team. Everything you write or upload is encrypted in your browser first.</p>
+        <ol class="empty-steps">
+          <li>Create a community and add your people</li>
+          <li>Split it into teams, each with its own chat and files</li>
+          <li>Only the people in a team can read what is inside</li>
+        </ol>
+        <button type="button" id="emptyCreate" class="primary">Create a community</button>
+      </div>
+
+      <section id="workspace" class="workspace" hidden>
+        <header id="channelHead" class="channel-head">
+          <div class="channel-title">
+            <h1 id="chatTitle"></h1>
+            <span id="chatSub"></span>
+            <p id="chatDescription" class="description" hidden></p>
+          </div>
+
+          <div class="menu-wrap">
+            <button type="button" id="chatMenuButton" class="icon-button" aria-label="Options" aria-expanded="false">&#8942;</button>
+            <div id="chatMenu" class="menu" hidden>
+              <button type="button" id="menuAddPeople">Add people</button>
+              <button type="button" id="menuNewTeam">New team</button>
+              <button type="button" id="menuEditTeam">Edit this team</button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Chat tab -->
+        <div id="chatPane" class="pane">
+          <div id="messages" class="messages">
+            <p id="noMessages" class="no-messages">No messages yet. Say hello!</p>
+          </div>
+
+          <form id="messageForm" class="message-form">
+            <input id="messageInput" type="text" maxlength="1000" autocomplete="off" placeholder="Write a message" aria-label="Message">
+            <button type="submit" class="primary">Send</button>
+          </form>
+        </div>
+
+        <!-- Files tab -->
+        <div id="filesPane" class="pane" hidden>
+          <div class="files-bar">
+            <div>
+              <strong>Encrypted files</strong>
+              <p class="note">Only .txt, .pdf and .docx files, up to 100 MB. Encrypted in your browser before upload.</p>
+              <p id="uploadStatus" class="upload-status"></p>
+            </div>
+            <label class="primary upload-button">
+              Upload files
+              <input type="file" id="fileInput" accept=".txt,.pdf,.docx" multiple hidden>
+            </label>
+          </div>
+          <div id="fileList" class="file-list"></div>
+        </div>
+
+        <!-- Members tab -->
+        <div id="membersPane" class="pane page" hidden>
+          <div class="page-head">
+            <div>
+              <h2>Members</h2>
+              <p id="memberCount" class="note"></p>
+            </div>
+            <button type="button" id="addPeople" class="primary">Add people</button>
+          </div>
+          <div id="memberList" class="cards"></div>
+
+          <div class="page-head">
+            <div>
+              <h2>Teams</h2>
+              <p id="teamCount" class="note"></p>
+            </div>
+            <button type="button" id="newTeam" class="primary">New team</button>
+          </div>
+          <div id="teamCards" class="cards"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Create community -->
+  <dialog id="createDialog">
+    <h2>Create a community</h2>
+    <form id="createForm" novalidate>
+      <label for="communityName">Community name</label>
+      <input type="text" id="communityName" maxlength="40" autocomplete="off">
+
+      <p class="label">Add people and choose their role</p>
+      <div id="memberChoices" class="choices"></div>
+
+      <p id="createError" class="error" role="alert"></p>
+      <div class="dialog-buttons">
+        <button type="button" id="cancelCreate" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Create community</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Add people to the open community -->
+  <dialog id="addDialog">
+    <h2>Add people</h2>
+    <form id="addForm" novalidate>
+      <p id="addNote" class="note"></p>
+      <div id="addChoices" class="choices"></div>
+      <p id="addError" class="error" role="alert"></p>
+      <div class="dialog-buttons">
+        <button type="button" id="cancelAdd" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Create or edit a team -->
+  <dialog id="teamDialog">
+    <h2 id="teamTitle">New team</h2>
+    <form id="teamForm" novalidate>
+      <label for="teamName">Team name</label>
+      <input type="text" id="teamName" maxlength="40" autocomplete="off" placeholder="For example: Mechanics">
+
+      <label for="teamDescription" class="space-top">Description</label>
+      <textarea id="teamDescription" maxlength="500" rows="3" placeholder="What is this team working on?"></textarea>
+      <p class="note">The description is encrypted too.</p>
+
+      <p class="label">Who is in this team?</p>
+      <div id="teamChoices" class="choices"></div>
+      <p id="teamNote" class="note"></p>
+
+      <p id="teamError" class="error" role="alert"></p>
+      <div class="dialog-buttons">
+        <button type="button" id="cancelTeam" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Save team</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settingsDialog">
+    <h2>Settings</h2>
+    <p class="label">Profile color</p>
+    <div id="colorChoices" class="swatches"></div>
+
+    <label class="check">
+      <input type="checkbox" id="compactToggle"> Compact messages
+    </label>
+
+    <div class="dialog-buttons">
+      <button type="button" id="closeSettings" class="primary">Done</button>
+    </div>
+  </dialog>
+
+  <script src="js/crypto.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
